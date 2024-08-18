@@ -1,3 +1,4 @@
+import { track,trigger } from "./effect";
 export function reactive(raw){
     /**
      * 对目标对象进行代理
@@ -10,7 +11,7 @@ export function reactive(raw){
              * @returns 返回当前属性对应的value值 例:1
              */
             const value = Reflect.get(target,key);
-            // 依赖收集
+            track(target,key); // 依赖收集
             return value
         },
         set(target,key,value){
@@ -18,6 +19,7 @@ export function reactive(raw){
              * @returns 返回一个布尔值,更新target 例: {foo:1} => foo+1 =>  {foo:2}
              */
             const newTarget = Reflect.set(target,key,value);
+            trigger(target,key); // 依赖收集
             // 触发依赖
             return newTarget
         }

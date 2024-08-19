@@ -5,7 +5,7 @@ class ReactiveEffect{
     }
     run(){
         activeEffect = this;
-        this._fn()
+        return this._fn()
     }
 }
 
@@ -45,4 +45,6 @@ let activeEffect; // 创建全局变量 获取到 fn,存入依赖收集函数中
 export function effect(fn:Function){
   const _effect = new ReactiveEffect(fn);
   _effect.run();
+
+  return _effect.run.bind(_effect);
 }

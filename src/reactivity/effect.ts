@@ -1,6 +1,6 @@
 class ReactiveEffect{
     private _fn:Function
-    constructor(fn:Function){
+    constructor(fn:Function,public scheduler?){
         this._fn = fn 
     }
     run(){
@@ -37,13 +37,17 @@ export function trigger(target,key){
     let depsMap = targetMap.get(target);
     let dep = depsMap.get(key);
     for (const effect of dep) {
-        effect.run();
+        if(effect.scheduler){
+            effect.scheduler();
+        }else {
+            effect.run();
+        }
     }
 }
 
 let activeEffect; // 创建全局变量 获取到 fn,存入依赖收集函数中
-export function effect(fn:Function){
-  const _effect = new ReactiveEffect(fn);
+export function effect(fn:Function,options:any = {}){
+  const _effect = new ReactiveEffect(fn,options.scheduler);
   _effect.run();
 
   return _effect.run.bind(_effect);
